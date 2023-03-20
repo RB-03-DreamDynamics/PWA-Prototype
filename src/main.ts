@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-
 import './assets/main.css'
 
 const app = createApp(App)
@@ -9,3 +8,13 @@ const app = createApp(App)
 app.use(createPinia())
 
 app.mount('#app')
+
+// create service worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+    })
+}
+
+
+
