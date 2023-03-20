@@ -19,6 +19,9 @@ if (import.meta.env.PROD) {
     console.log('VitePWA: PROD')
     registerSW({
         immediate: true,
+
+        
+
         onNeedRefresh() {
             console.log('onNeedRefresh')
             // show a prompt to user
