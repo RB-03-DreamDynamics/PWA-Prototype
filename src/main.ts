@@ -3,18 +3,20 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import './assets/main.css'
 
+import { VitePWA } from 'vite-plugin-pwa'
+import { registerSW } from 'virtual:pwa-register'
+
+
 const app = createApp(App)
 
 app.use(createPinia())
 
-app.mount('#app')
+registerSW({
+    onNeedRefresh() {},
+    onOfflineReady() {},
+})
 
-// create service worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-    })
-}
+app.mount('#app')
 
 
 

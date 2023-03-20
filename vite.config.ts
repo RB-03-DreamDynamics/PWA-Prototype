@@ -11,9 +11,11 @@ export default defineConfig({
     vue(),
     vueJsx(),
     VitePWA({
+      registerType: 'autoUpdate',
       manifest: {
         name: 'PWA-Prototype',
         short_name: 'PWA-Prototype',
+        start_url: '/',
         description: 'A Vue.js 3 PWA Prototype',
         theme_color: '#ffffff',
         icons: [
@@ -33,6 +35,11 @@ export default defineConfig({
             type: 'image/png',
             purpose: 'any maskable'
           }
+        ]
+      },
+      workbox: {
+        globPatterns: [
+          '**/*.{js,css,html,png,jpg,jpeg,svg,gif,ico,webp,webmanifest,woff,woff2,ttf,otf}'
         ]
       }
     })
