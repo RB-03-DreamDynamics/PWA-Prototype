@@ -1,18 +1,38 @@
-<script setup lang="ts">
-import LoginQR from './components/Auth/login.vue'
+<script lang="ts">
+import { defineComponent, reactive } from "vue";
 import { StreamBarcodeReader } from "vue-barcode-reader";
-const onDecode = (text : any) =>
+import Login from './components/Auth/LoginZenya.vue';
+const onDecode = (text : any) => {
     console.log(`${text}`)
-import Login from './components/Auth/LoginZenya.vue'
+};
+
+export default defineComponent({
+  components: {
+    StreamBarcodeReader,
+    Login
+  },
+  setup() {
+    const state = reactive({
+      readerEnabled: false,
+    });
+
+    const toggleReader = () => {
+      state.readerEnabled = !state.readerEnabled;
+    };
+
+    return {
+      state,
+      toggleReader,
+      onDecode,
+    };
+  },
+});
 </script>
 
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <LoginQR username="" password="" />
-    </div>
     <div class="wrapper">
       <Login username="" password="" />
     </div>
@@ -21,9 +41,13 @@ import Login from './components/Auth/LoginZenya.vue'
     </div>
   </header>
 
-  <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
+  <div>
+    <button @click="toggleReader">{{ state.readerEnabled ? 'Disable' : 'Enable' }} Reader</button>
+    <div v-if="state.readerEnabled">
+      <StreamBarcodeReader @decode="onDecode"/>
+    </div>
+  </div>
 </template>
-
 
 <style scoped>
 header {
