@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import axios from "axios";
+import $ from 'jquery'
+import DOMPurify from 'dompurify';
 
 const username = ref('')
 const password = ref('')
@@ -19,22 +20,37 @@ function base64EncodeUnicode(input: string | number | boolean) {
 }
 
 async function checkAuth() {
-  const baseURL = "http://iprova/api/versions/iprova";
+  /*
+  This example shows how credential authentication is handled with jQuery.
+  Of course you should never expose your apiKey or password in the front end.
+  */
+  var _userName =  DOMPurify.sanitize(username.value);
+  var _password =  DOMPurify.sanitize(password.value);
+  console.log(_userName);
+  console.log(_password);
+// Globally handle all ajax errors
+  $(document).ajaxError(function( event, jqxhr, settings, thrownError ) {
+    alert(JSON.stringify(jqxhr));
+  });
 
-  const config = {
-    headers: {
-      "Authorization": "Basic" + base64EncodeUnicode("j.t.kirk" + ":" + "set password"),
-      "x-api-version": "1",
-      "Accept": "application/vnd.example.api+json"
-    }
-  };
-  try {
-    const returnvalue = await axios.get(baseURL, config)
-    console.log(returnvalue)
-    return returnvalue;
-  } catch (e) {
-    console.error(e);
+  function base64EncodeUnicode(input) {
+    return btoa(
+        encodeURIComponent(input).replace(/%([0-9A-F]{2})/g, function toSolidBytes(match, p1) {
+          return String.fromCharCode(parseInt("0x" + p1));
+        })
+    );
   }
+console.log(base64EncodeUnicode(_userName + ":" + _password))
+// Get the iProva version
+  fetch("https://msteams.zenya.work/api/bearer_tokens", {
+    method: "POST",
+    headers: {
+      Authorization: "Basic " + base64EncodeUnicode(_userName + ":" + _password)
+    }
+  }).then(res => res.json())
+      .then(response => {
+        console.log(response);
+      })
 }
 </script>
 
