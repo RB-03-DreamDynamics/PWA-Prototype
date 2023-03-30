@@ -56,11 +56,14 @@ async function checkAuth() {
 
 <template>
   <div>
-    <h1>Login</h1>
-    <p>Username</p>
-    <input type="text" v-model="username" />
-    <p>Password</p>
-    <input type="password" v-model="password" />
-    <button @click="checkAuth">Login</button>
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      <input class="form-control" type="text" v-model="username" />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+    <input class="form-control" type="password" v-model="password" />
+    </div>
+    <button class="btn btn-primary" @click="checkAuth">Login</button>
   </div>
 </template>
