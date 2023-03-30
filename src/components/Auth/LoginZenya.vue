@@ -33,7 +33,7 @@ async function checkAuth() {
     alert(JSON.stringify(jqxhr));
   });
 
-  function base64EncodeUnicode(input) {
+  function base64EncodeUnicode(input:string) {
     return btoa(
       encodeURIComponent(input).replace(/%([0-9A-F]{2})/g, function toSolidBytes(match, p1) {
         return String.fromCharCode(parseInt("0x" + p1));
