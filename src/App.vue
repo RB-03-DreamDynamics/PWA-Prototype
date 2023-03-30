@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import LoginQR from './components/Auth/login.vue'
+import { StreamBarcodeReader } from "vue-barcode-reader";
+const onDecode = (text : any) =>
+    console.log(`${text}`)
 import Login from './components/Auth/LoginZenya.vue'
 </script>
 
@@ -7,11 +11,19 @@ import Login from './components/Auth/LoginZenya.vue'
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
+      <LoginQR username="" password="" />
+    </div>
+    <div class="wrapper">
       <Login username="" password="" />
+    </div>
+    <div class="wrapper">
+      <a href="/qr">Login with QR code</a>
     </div>
   </header>
 
+  <StreamBarcodeReader @decode="onDecode" @loaded="onLoaded"></StreamBarcodeReader>
 </template>
+
 
 <style scoped>
 header {
