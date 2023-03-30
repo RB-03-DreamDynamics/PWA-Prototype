@@ -1,3 +1,53 @@
-h1 {
-    color: red;
+$primary: #FF1F5B;
+
+@font-face {
+    font-family: 'Futura PT Heavy';
+    src: url('assets/fonts/Futura-PT-Heavy.ttf');
+}
+@font-face {
+    font-family: 'NunitoSans-Bold';
+    src: url('assets/fonts/NunitoSans-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'NunitoSans-Regular';
+    src: url('assets/fonts/NunitoSans-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'NunitoSans-Light';
+    src: url('assets/fonts/NunitoSans-Light.ttf');
+}
+
+@font-face {
+    font-family: 'NunitoSans-Italic';
+    src: url('assets/fonts/NunitoSans-Italic.ttf');
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+
+.logo-text{
+    font-family: 'Futura PT Heavy', sans-serif;
+}
+
+h1, h2, h3, h4{
+    font-family: 'NunitoSans-Bold', sans-serif;
+    color: $primary;
+}
+
+p, span, a{
+    font-family: 'NunitoSans-Regular', sans-serif;
+}
+
+.bg-login{
+    min-height: 100%;
+    width: 100%;
+    background: linear-gradient(135deg, #9A1538 0%, #FF1F5B 100%);
+    display: flex;
+    align-items: center; 
 }
