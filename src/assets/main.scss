@@ -30,6 +30,9 @@ body {
   margin: 0;
 }
 
+.zenya-color{
+    color: $primary;
+}
 
 .logo-text{
     font-family: 'Futura PT Heavy', sans-serif;
@@ -45,9 +48,36 @@ p, span, a{
 }
 
 .bg-login{
-    min-height: 100%;
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: linear-gradient(135deg, #9A1538 0%, #FF1F5B 100%);
     display: flex;
-    align-items: center; 
 }
+
+.logo-bg{
+    background: white;
+    border-radius: 25px 0 52px 0;
+    box-shadow: 0 0 12px 8px rgba(0, 0, 0, .2);
+}
+
+.login-bg{
+    border-radius: 25px 0 52px 0;
+    box-shadow: 0 0 12px 8px rgba(0, 0, 0, .2); 
+    background-color: rgba(150, 150, 150, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.background-logo{
+    position: absolute;
+    bottom: -5vh;
+    right: -22vw;
+    z-index: -1;
+    filter: drop-shadow(5px 5px 12px rgba(0, 0, 0, .2));
+}
+a {
+    text-decoration: none!important;
+}
+  

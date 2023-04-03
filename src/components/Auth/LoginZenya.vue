@@ -55,15 +55,20 @@ async function checkAuth() {
 </script>
 
 <template>
-  <div>
-    <div class="mb-3">
-      <label class="form-label">Username</label>
-      <input class="form-control" type="text" v-model="username" />
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-    <input class="form-control" type="password" v-model="password" />
-    </div>
-    <button class="btn btn-primary" @click="checkAuth">Login</button>
+  <div class="login-bg px-2 py-5 mx-3 row">
+    <div class="col-12">
+
+      <div class="row">
+        <div class="mb-3">
+          <label class="form-label text-white">Username</label>
+          <input class="form-control" type="text" v-model="username" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label text-white">Password</label>
+        <input class="form-control" type="password" v-model="password" />
+        </div>
+        <button class="btn btn-primary" @click="checkAuth">Login</button>
+      </div>
+    </div>    
   </div>
 </template>

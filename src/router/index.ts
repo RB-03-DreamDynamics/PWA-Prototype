@@ -1,10 +1,12 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
+import type {RouteRecordRaw } from 'vue-router';
 import Login from '../views/login.vue';
 import QRLogin from '../views/qrlogin.vue';
+import LoginChoice from '../views/loginchoice.vue';
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/login',
+    path: '/login/credentials',
     name: 'Login',
     component: Login
   },
@@ -13,6 +15,11 @@ const routes: RouteRecordRaw[] = [
     name: 'QR-login',
     component: QRLogin
   },
+  {
+    path: '/login',
+    name: 'Login-choice',
+    component: LoginChoice
+  }
   // Add more routes here
 ];
 
