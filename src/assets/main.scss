@@ -80,4 +80,14 @@ p, span, a{
 a {
     text-decoration: none!important;
 }
-  
+
+.submit-button{
+    background-color: $primary;
+    color: white;
+    font-family: 'NunitoSans-Bold', sans-serif;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    border: none;
+    padding: 10px 20px;
+    box-shadow: 0 0 12px 8px rgba(0, 0, 0, .2);
+}

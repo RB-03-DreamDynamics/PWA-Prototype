@@ -22,15 +22,12 @@
                 </div>  
             </div>
 
-            <div class="row py-5">
+            <div class="row login-bg px-2 py-5 mx-3 my-5 justify-content-center ">
                 <div class="col-12">
+                    <div class="row pb-3">
+                        <h1 class="text-white text-center fw-bold">Aanmelden</h1>
+                    </div>
                     <Login username="" password="" />
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 py-5">
-                    <a href="/login/qr">Login with QR code</a>
                 </div>
             </div>
 
