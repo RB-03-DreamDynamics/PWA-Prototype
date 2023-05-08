@@ -37,15 +37,16 @@ export default defineComponent({
       <div class="col-12">
         <div v-for="(item, index) in contentItems" :key="index" class="row mb-2">
           <div class="col-6" v-if="index % 2 === 0">
-            <a href="contentItems[index].source_item_id" class="card">
+            <router-link :to="{ name: 'FormCreate', params: { form_id: contentItems[index].source_item_id }}" >
               <h2 class="card-title">{{ contentItems[index].title }}</h2>
               <p class="card-text">{{ contentItems[index].summary }}</p>
-            </a>
+            </router-link>
           </div>
           <div class="col-6"  v-if="contentItems[index + 1]">
-            <img :src="item.icon" class="card-img-top" alt="...">
+            <router-link :to="{ name: 'FormCreate', params: { form_id: contentItems[index + 1].source_item_id }}" >
               <h2 class="card-title">{{ contentItems[index + 1].title }}</h2>
               <p class="card-text">{{ contentItems[index + 1].summary }}</p>
+            </router-link>
           </div>
         </div>
       </div>
