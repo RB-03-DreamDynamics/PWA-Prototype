@@ -3,6 +3,7 @@ import type {RouteRecordRaw } from 'vue-router';
 import Login from '../views/login.vue';
 import QRLogin from '../views/qrlogin.vue';
 import LoginChoice from '../views/loginchoice.vue';
+import Dashboard from '../views/dashboard.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -19,8 +20,12 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'Login-choice',
     component: LoginChoice
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard
   }
-  // Add more routes here
 ];
 
 const router = createRouter({

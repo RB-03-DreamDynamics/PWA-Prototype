@@ -91,3 +91,16 @@ a {
     padding: 10px 20px;
     box-shadow: 0 0 12px 8px rgba(0, 0, 0, .2);
 }
+
+.footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $primary;
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'NunitoSans-Light', sans-serif;
+    font-size: 0.8rem;
+    color: #FFF;
+}
