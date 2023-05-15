@@ -22,6 +22,7 @@ import { defineComponent } from "vue";
 import TextField from "./form-fields/TextField.vue";
 import NumericField from "./form-fields/NumericField.vue";
 import DateField from "./form-fields/DateField.vue";
+import SubjectTreeField from "./form-fields/SubjectTreeField.vue";
 // Import other field components as needed
 
 interface FormElement {
@@ -40,6 +41,7 @@ export default defineComponent({
     TextField,
     NumericField,
     DateField,
+    SubjectTreeField,
     // Add other field components as needed
   },
   props: {
@@ -62,6 +64,8 @@ setup(props) {
         return "NumericField";
       case "date":
         return "DateField";
+      case "subject_tree":
+        return "SubjectTreeField";
       // Add other field types as needed
       default:
         return null;
@@ -96,6 +100,14 @@ setup(props) {
           readOnly: element.field.read_only,
           label: element.text,
           elementId: 'dateField-' + element.element_id,
+        };
+      case "subject_tree":
+        return {
+          value: element.field.default_value,
+          required: element.field.required,
+          readOnly: element.field.read_only,
+          label: element.text,
+          elementId: 'subjectTreeField-' + element.element_id,
         };
       default:
         return {};
