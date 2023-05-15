@@ -1,4 +1,5 @@
 {
+  "include": ["env.d.ts", "./src/**/*"],
   "files": [],
   "references": [
     {
@@ -10,5 +11,8 @@
     {
       "path": "./tsconfig.vitest.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "esModuleInterop": true,
+  }
 }
