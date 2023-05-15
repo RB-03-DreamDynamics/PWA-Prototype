@@ -1,9 +1,26 @@
+<template>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h1>Form Id: {{ formId }}</h1>
+      </div>
+    </div>
+    <div v-if="form">
+      <form-renderer :form=form />
+    </div>
+  </div>
+</template>
+
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
-import axios from 'axios';
+import { defineComponent, ref, onMounted } from "vue";
+import axios from "axios";
+import FormRenderer from "./FormRenderer.vue";
 
 export default defineComponent({
-  name: 'FormCreateComponent',
+  name: "FormCreateComponent",
+  components: {
+    FormRenderer,
+  },
   props: {
     formId: {
       type: String,
@@ -12,35 +29,23 @@ export default defineComponent({
   },
   setup(props) {
     const form = ref(null);
-
     const fetchForm = async () => {
       try {
         const response = await axios.get(
-          `{{baseUrl}}/cases/reporter_forms/${props.formId}?include_design=true`
+          `https://msteams.zenya.work/api/cases/reporter_forms/${props.formId}?include_design=true`
         );
         form.value = response.data;
       } catch (error) {
         console.error(error);
       }
     };
+  onMounted(() => {
+  fetchForm();
+  });
 
-    onMounted(() => {
-      fetchForm();
-    });
-
-    return {
-      form,
+  return {
+    form,
     };
   },
 });
 </script>
-
-<template>
-    <div class="container">
-        <div class="row">
-        <div class="col-12">
-            <h1>{{ formId }}</h1>
-        </div>
-        </div>
-    </div>
-</template>
