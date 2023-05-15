@@ -1,13 +1,16 @@
 <template>
-  <label :for="elementId" class="form-label">{{ label }}</label>
-  <input 
-      :id="elementId"
-      type="date" 
-      :value="value" 
-      :required="required" 
-      :readonly="readOnly" 
-      @input="onInput"
-      class="form-control" />
+  <div class="mb-3">
+
+    <label :for="elementId" class="form-label">{{ label }}</label>
+    <input 
+        :id="elementId"
+        type="date" 
+        :value="value" 
+        :required="required" 
+        :readonly="readOnly" 
+        @input="onInput"
+        class="form-control" />
+  </div>
 </template>
 
 <script>
