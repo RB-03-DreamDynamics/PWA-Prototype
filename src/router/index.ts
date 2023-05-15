@@ -3,6 +3,8 @@ import type {RouteRecordRaw } from 'vue-router';
 import Login from '../views/login.vue';
 import QRLogin from '../views/qrlogin.vue';
 import LoginChoice from '../views/loginchoice.vue';
+import Dashboard from '../views/dashboardView.vue';
+import FormCreateView from '../views/formCreateView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -19,8 +21,18 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'Login-choice',
     component: LoginChoice
-  }
-  // Add more routes here
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: Dashboard
+  },
+  {
+    path: '/form/create/:form_id',
+    name: 'FormCreate',
+    component: FormCreateView,
+    props: true,
+  },
 ];
 
 const router = createRouter({
