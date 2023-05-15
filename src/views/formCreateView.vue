@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import FooterComponent from '../components/Layout/footer.vue'
+import FooterComponent from '../components/Layout/FooterComponent.vue'
 import FormCreateComponent from '../components/Forms/formCreateComponent.vue'
 import HeaderComponent from '../components/Layout/HeaderComponent.vue'
 import { useRoute } from 'vue-router';
