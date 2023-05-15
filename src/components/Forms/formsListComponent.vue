@@ -1,35 +1,41 @@
-<script lang="ts">
-
-import { defineComponent, ref, onMounted } from 'vue';
+<script setup lang="ts">
+import { shallowRef, onMounted } from 'vue';
 import axios from 'axios';
 
-export default defineComponent({
-  name: 'FormsListComponent',
-  setup() {
-    const contentItems = ref([]);
+type ContentType = {
+  content_type_id: number,
+  plural_name: string,
+  singular_name: string
+};
 
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('https://msteams.zenya.work/api/portals/content_items?portal_id=183&include_icons=true&include_content_type=true&include_sub_type_field=true&sort=category,title&limit=100&fillable=true');
-        contentItems.value = response.data;
-        console.log(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+type ContentItem = {
+  content_item_id: string,
+  source_item_id: string,
+  content_type: ContentType,
+  fillable: boolean,
+  icon: any,
+  has_tooltip_fields: boolean,
+  is_summary_html: boolean,
+  last_modified_date_time: string,
+  title: string,
+  summary: string
+};
 
-    onMounted(() => {
-      fetchData();
-    });
+const contentItems = shallowRef<ContentItem[]>([]);
 
-    return {
-      contentItems,
-    };
-  },
-});
+const fetchData = async () => {
+  try {
+    const response = await axios.get('https://msteams.zenya.work/api/portals/content_items?portal_id=183&include_icons=true&include_content_type=true&include_sub_type_field=true&sort=category,title&limit=100&fillable=true');
+    contentItems.value = response.data;
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-
+onMounted(fetchData);
 </script>
+
 
 <template>
   <div class="container">

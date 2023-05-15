@@ -6,7 +6,7 @@
         <p>Description: {{ form.description }}</p>
         <div v-for="element in form.design.elements" :key="element.element_id">
            <component 
-            :is="fieldComponent(element.field?.type)" 
+            :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)" 
             v-if="element.element_type === 'field'"
             v-bind="fieldProps(element)"
           ></component>
@@ -57,7 +57,7 @@ defineProps({
   },
 });
 
-const fieldComponent = (fieldType) => {
+const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | undefined) => {
   switch (fieldType) {
     case "text":
       return TextField;
@@ -71,6 +71,7 @@ const fieldComponent = (fieldType) => {
       return null;
   }
 };
+
 
 const fieldProps = (element: FormElement) => {
   switch (element.field?.type) {
