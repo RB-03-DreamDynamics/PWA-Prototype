@@ -1,0 +1,106 @@
+$primary: #FF1F5B;
+
+@font-face {
+    font-family: 'Futura PT Heavy';
+    src: url('assets/fonts/Futura-PT-Heavy.ttf');
+}
+@font-face {
+    font-family: 'NunitoSans-Bold';
+    src: url('assets/fonts/NunitoSans-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'NunitoSans-Regular';
+    src: url('assets/fonts/NunitoSans-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'NunitoSans-Light';
+    src: url('assets/fonts/NunitoSans-Light.ttf');
+}
+
+@font-face {
+    font-family: 'NunitoSans-Italic';
+    src: url('assets/fonts/NunitoSans-Italic.ttf');
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+.zenya-color{
+    color: $primary;
+}
+
+.logo-text{
+    font-family: 'Futura PT Heavy', sans-serif;
+}
+
+h1, h2, h3, h4{
+    font-family: 'NunitoSans-Bold', sans-serif;
+    color: $primary;
+}
+
+p, span, a{
+    font-family: 'NunitoSans-Regular', sans-serif;
+}
+
+.bg-login{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #9A1538 0%, #FF1F5B 100%);
+    display: flex;
+}
+
+.logo-bg{
+    background: white;
+    border-radius: 25px 0 52px 0;
+    box-shadow: 0 0 12px 8px rgba(0, 0, 0, .2);
+}
+
+.login-bg{
+    border-radius: 25px 0 52px 0;
+    box-shadow: 0 0 12px 8px rgba(0, 0, 0, .2); 
+    background-color: rgba(150, 150, 150, 0.4);
+    backdrop-filter: blur(10px);
+}
+
+.background-logo{
+    position: absolute;
+    bottom: -5vh;
+    right: -22vw;
+    z-index: -1;
+    filter: drop-shadow(5px 5px 12px rgba(0, 0, 0, .2));
+}
+a {
+    text-decoration: none!important;
+}
+
+.submit-button{
+    background-color: $primary;
+    color: white;
+    font-family: 'NunitoSans-Bold', sans-serif;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    border: none;
+    padding: 10px 20px;
+    box-shadow: 0 0 12px 8px rgba(0, 0, 0, .2);
+}
+
+.footer{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $primary;
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'NunitoSans-Light', sans-serif;
+    font-size: 0.8rem;
+    color: #FFF;
+}
