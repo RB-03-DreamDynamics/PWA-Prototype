@@ -13,47 +13,45 @@
   </div>
 </template>
 
-<script lang="ts">
-  export default {
-  props: {
-    value: {
-      type: String,
-      default: '',
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    readOnly: {
-      type: Boolean,
-      default: false,
-    },
-    allowFutureDates: {
-      type: Boolean,
-      default: true,
-    },
-    allowPastDates: {
-      type: Boolean,
-      default: true,
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    elementId: {
-      type: String,
-      required: true
-    }
-  },
-  methods: {
-    onInput(event) {
-      const dateValue = new Date(event.target.value);
-      const now = new Date();
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
 
-      this.$emit('input', event.target.value);
-    },
+defineProps({
+  value: {
+    type: String,
+    default: '',
   },
-};
+  required: {
+    type: Boolean,
+    default: false,
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
+  allowFutureDates: {
+    type: Boolean,
+    default: true,
+  },
+  allowPastDates: {
+    type: Boolean,
+    default: true,
+  },
+  label: {
+    type: String,
+    default: '',
+  },
+  elementId: {
+    type: String,
+    required: true
+  },
+});
+
+const emit = defineEmits(["input"]);
+
+const onInput = (event: Event) => {
+  emit('input', (event.target as HTMLInputElement).value);
+}
 </script>
   
 <style scoped>
