@@ -16,46 +16,47 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    value: {
-      type: Number,
-      default: 0,
-    },
-    minValue: {
-      type: Number,
-      default: null,
-    },
-    maxValue: {
-      type: Number,
-      default: null,
-    },
-    step: {
-      type: Number,
-      default: 1,
-    },
-    required: {
-      type: Boolean,
-      default: false,
-    },
-    readOnly: {
-      type: Boolean,
-      default: false,
-    },
-    label: {
-      type: String,
-      default: '',
-    },
-    elementId: {
-      type: String,
-      required: true
-    },
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
+
+defineProps({
+  value: {
+    type: Number,
+    default: 0,
   },
-  methods: {
-    onInput(event) {
-      this.$emit('input', +event.target.value);
-    },
+  minValue: {
+    type: Number,
+    default: null,
   },
-};
+  maxValue: {
+    type: Number,
+    default: null,
+  },
+  step: {
+    type: Number,
+    default: 1,
+  },
+  required: {
+    type: Boolean,
+    default: false,
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
+  label: {
+    type: String,
+    default: '',
+  },
+  elementId: {
+    type: String,
+    required: true
+  },
+});
+
+const emit = defineEmits(['input']);
+
+const onInput = (event: Event) => {
+  emit('input', +(event.target as HTMLInputElement).value);
+}
 </script>

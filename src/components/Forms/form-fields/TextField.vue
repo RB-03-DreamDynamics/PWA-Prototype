@@ -13,9 +13,10 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
+<script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
+
+defineProps({
     value: {
       type: String,
       default: '',
@@ -40,11 +41,10 @@ export default {
       type: Number,
       default: 1,
     }
-  },
-  methods: {
-    onInput(event) {
-      this.$emit('input', event.target.value);
-    },
-  },
-};
+  });
+  const emit = defineEmits(['input']);
+
+  const onInput = (event: Event) => {
+    emit('input', (event.target as HTMLTextAreaElement).value);
+  }
 </script>
