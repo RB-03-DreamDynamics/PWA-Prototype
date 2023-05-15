@@ -14,5 +14,7 @@
   ],
   "compilerOptions": {
     "esModuleInterop": true,
+    "allowJs": true,
+    "noEmit": true
   }
 }
