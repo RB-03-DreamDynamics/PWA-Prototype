@@ -106,6 +106,20 @@ a {
     color: #FFF;
 }
 
+.footer-icons{
+    height: 4vh;
+    width: auto;
+    margin-bottom: 5px;
+}
+
+.footer-add-button{
+    height: 5vh;
+    width: 5vh;
+    color: $primary;
+    border-radius: 100%;
+    background-color: #fff;
+}
+
 .header{
     position: absolute;
     top: 0;
