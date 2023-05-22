@@ -6,6 +6,6 @@ import HeaderComponent from '../components/Layout/HeaderComponent.vue';
 
 <template>
     <HeaderComponent />
-    <FormsListComponent />
+    <FormsListComponent class="header-clearer" />
     <FooterComponent />
 </template>
