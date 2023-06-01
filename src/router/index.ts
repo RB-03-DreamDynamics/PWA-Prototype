@@ -50,4 +50,15 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+
+  if (!to.path.startsWith('/login') && !token) {
+    next('/login');
+  }else if(to.path.startsWith('/login') && token){
+    next('/dashboard');
+  }else{
+    next();
+  }
+});
 export default router;
