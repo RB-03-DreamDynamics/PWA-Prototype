@@ -4,19 +4,15 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "logout",
-    mounted() {
-        this.logout();
-    },
-    methods: {
-        logout() {
-            if (localStorage.getItem("token") != null) {
-                localStorage.removeItem("token");
-                window.location.href = "/login";
-            }
-        },
-    },
+<script setup lang="ts">
+import { onMounted } from 'vue';
+
+const logout = () => {
+    if (localStorage.getItem('token') != null) {
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+    }
 };
+
+onMounted(logout);
 </script>
