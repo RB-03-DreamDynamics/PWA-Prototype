@@ -24,10 +24,29 @@ type ContentItem = {
 const contentItems = shallowRef<ContentItem[]>([]);
 
 const fetchData = async () => {
+  const apiUrl = 'https://msteams.zenya.work/api/portals/content_items?portal_id=183&include_icons=true&include_content_type=true&include_sub_type_field=true&sort=category,title&limit=100&fillable=true';
+  const request = new Request(apiUrl);
+
   try {
-    const response = await axios.get('https://msteams.zenya.work/api/portals/content_items?portal_id=183&include_icons=true&include_content_type=true&include_sub_type_field=true&sort=category,title&limit=100&fillable=true');
-    contentItems.value = response.data;
-    console.log(response.data);
+    const cache = await caches.open("form-cache");
+    const cachedResponse = await cache.match(request);
+
+    if (cachedResponse) {
+      // Response found in cache, use it
+      const data = await cachedResponse.json();
+      contentItems.value = data;
+      console.log(data);
+    } else {
+      // No response found in cache, fetch it from network
+      const response = await fetch(request);
+      const data = await response.json();
+
+      // Store the fetched response in the cache for future use
+      await cache.put(request, response.clone());
+
+      contentItems.value = data;
+      console.log(data);
+    }
   } catch (error) {
     console.error(error);
   }
