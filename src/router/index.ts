@@ -23,11 +23,6 @@ const routes: RouteRecordRaw[] = [
     component: QRLogin
   },
   {
-    path: '/logout',
-    name: 'logout',
-    component: logout
-  },
-  {
     path: '/login',
     name: 'Login-choice',
     component: LoginChoice
@@ -42,6 +37,11 @@ const routes: RouteRecordRaw[] = [
     name: 'FormCreate',
     component: FormCreateView,
     props: true,
+  },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: logout
   },
 ];
 
