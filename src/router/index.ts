@@ -8,6 +8,10 @@ import FormCreateView from '../views/formCreateView.vue';
 
 const routes: RouteRecordRaw[] = [
   {
+    path: '/',
+    redirect: '/login'
+  },  
+  {
     path: '/login/credentials',
     name: 'Login',
     component: Login

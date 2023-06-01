@@ -50,6 +50,7 @@ async function checkAuth() {
   }).then(res => res.json())
     .then(response => {
       console.log(response);
+      window.location.href = "/dashboard";
     })
 }
 </script>
