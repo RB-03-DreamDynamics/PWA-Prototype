@@ -43,13 +43,13 @@ onMounted(fetchData);
       <div class="col-12">
         <div v-for="(item, index) in contentItems" :key="index" class="row mb-2">
           <div class="col-6" v-if="index % 2 === 0">
-            <router-link :to="{ name: 'FormCreate', params: { form_id: contentItems[index].source_item_id }}" >
+            <router-link :to="{ name: 'FormCreate', params: { form_id: '2220' }}" >
               <h2 class="card-title">{{ contentItems[index].title }}</h2>
               <p class="card-text">{{ contentItems[index].summary }}</p>
             </router-link>
           </div>
           <div class="col-6"  v-if="contentItems[index + 1]">
-            <router-link :to="{ name: 'FormCreate', params: { form_id: contentItems[index + 1].source_item_id }}" >
+            <router-link :to="{ name: 'FormCreate', params: { form_id: '2220' }}" >
               <h2 class="card-title">{{ contentItems[index + 1].title }}</h2>
               <p class="card-text">{{ contentItems[index + 1].summary }}</p>
             </router-link>
