@@ -30,13 +30,9 @@ export default defineComponent({
       const apiUrl = `https://msteams.zenya.work/api/cases/reporter_forms/2220?include_design=true`;
       const request = new Request(apiUrl);
 
-
-
       try {
         const cache = await caches.open("form-cache");
         const cachedResponse = await cache.match(request);
-
-
 
         if (cachedResponse) {
           // Response found in cache, use it
@@ -45,11 +41,8 @@ export default defineComponent({
         } else {
           // No response found in cache, fetch it from network
           const response = await fetch(request);
-          const clonedResponse = response.clone();
           const data = await response.json();
 
-          // Store the fetched response in the cache for future use
-          await cache.put(request, clonedResponse);
           form.value = data;
         }
       } catch (error) {
