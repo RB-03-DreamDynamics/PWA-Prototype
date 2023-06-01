@@ -5,6 +5,16 @@ import { register } from 'register-service-worker'
 console.log('registerServiceWorker.js: ' + process.env.NODE_ENV)
 
 if (process.env.NODE_ENV === 'production') {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(() => {
+          console.log('Service Worker registered successfully.');
+        })
+        .catch(error => {
+          console.error('Error registering Service Worker:', error);
+        });
+  }
+
   register(`/sw.js`, {
     ready () {
       console.log(
@@ -16,22 +26,7 @@ if (process.env.NODE_ENV === 'production') {
       console.log('Service worker has been registered.')
     },
     cached () {
-      caches.open('fontys-form')
-          .then(cache => {
-            return cache.addAll([
-              'https://msteams.zenya.work/api/portals/content_items?portal_id=183&include_icons=true&include_content_type=true&include_sub_type_field=true&sort=category,title&limit=100&fillable=true',
-              'https://msteams.zenya.work/api/cases/reporter_forms/2220?include_design=true',
-            ]);
-          })
-
-      self.addEventListener('fetch', event => {
-        event.respondWith(
-            caches.match(event.request)
-                .then(response => {
-                  return response || fetch(event.request);
-                })
-        );
-      });
+      console.log('Content has been cached for offline use.')
     },
     updatefound () {
       console.log('New content is downloading.')
