@@ -45,15 +45,11 @@ export default defineComponent({
         } else {
           // No response found in cache, fetch it from network
           const response = await fetch(request);
+          const clonedResponse = response.clone();
           const data = await response.json();
 
-
-
           // Store the fetched response in the cache for future use
-          await cache.put(request, response.clone());
-
-
-
+          await cache.put(request, clonedResponse);
           form.value = data;
         }
       } catch (error) {
