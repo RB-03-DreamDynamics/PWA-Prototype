@@ -1,5 +1,9 @@
 <script setup lang="ts">
     import Login from '../components/Auth/LoginZenya.vue';
+
+    if(localStorage.getItem('token') != null){
+        window.location.href = "/dashboard";
+    }
 </script>
 
 <template>
