@@ -48,14 +48,19 @@ export default defineComponent({
                     <p class="p-0 m-0 lh-1">Info & Feedback</p>
                 </div>
             </div>
-            <div class="col-2">
-                <div class="row">
-                    <img src="@/assets/icons/mdi-logout.svg" alt="Logout icon" class="footer-icons">
+                <div class="col-2">
+                    <router-link to="/logout">
+
+                    <div class="row">
+                        <img src="@/assets/icons/mdi-logout.svg" alt="Logout icon" class="footer-icons">
+                    </div>
+                    </router-link>
+
+                    <div class="row">
+                        <p class="p-0 m-0">Uitloggen</p>
+                    </div>
                 </div>
-                <div class="row">
-                    <p class="p-0 m-0">Uitloggen</p>
-                </div>
-            </div>
+
         </div>
     </div>
 </template>

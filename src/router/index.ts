@@ -5,6 +5,7 @@ import QRLogin from '../views/qrlogin.vue';
 import LoginChoice from '../views/loginchoice.vue';
 import Dashboard from '../views/dashboardView.vue';
 import FormCreateView from '../views/formCreateView.vue';
+import logout from '../components/Auth/logout.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -36,6 +37,11 @@ const routes: RouteRecordRaw[] = [
     name: 'FormCreate',
     component: FormCreateView,
     props: true,
+  },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: logout
   },
 ];
 
