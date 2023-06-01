@@ -10,7 +10,6 @@ const login = () => {
   console.log('login')
 }
 
-
 function base64EncodeUnicode(input: string | number | boolean) {
   return btoa(
     encodeURIComponent(input).replace(/%([0-9A-F]{2})/g, function toSolidBytes(match, p1) {
@@ -50,6 +49,8 @@ async function checkAuth() {
   }).then(res => res.json())
     .then(response => {
       console.log(response);
+        localStorage.setItem( 'token', JSON.stringify(response) );
+        window.location.href = "/dashboard";
     })
 }
 </script>
