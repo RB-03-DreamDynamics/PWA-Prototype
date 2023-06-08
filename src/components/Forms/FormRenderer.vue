@@ -31,6 +31,7 @@ import TextField from "./form-fields/TextField.vue";
 import NumericField from "./form-fields/NumericField.vue";
 import DateField from "./form-fields/DateField.vue";
 import SubjectTreeField from "./form-fields/SubjectTreeField.vue";
+import ListField from "./form-fields/ListField.vue";
 
 interface Form {
   form_id: number;
@@ -41,6 +42,16 @@ interface Form {
   };
 }
 
+interface SubjectTreeDefaultValue {
+  subject_id: number;
+  name: string;
+}
+
+interface ListDefaultValue {
+  list_item_id: number;
+  name: string;
+}
+
 interface FormElement {
   element_id: number;
   element_type: string;
@@ -48,12 +59,16 @@ interface FormElement {
   field?: {
     field_id: number;
     type: string;
-    default_value?: string;
+    default_value?: string | SubjectTreeDefaultValue | ListDefaultValue[];
     required?: boolean;
     read_only?: boolean;
     min_numeric_value?: number;
     max_numeric_value?: number;
     only_integers?: boolean;
+    list_items?: {
+      list_item_id: number;
+      name: string;
+    }[];
   };
 }
 
@@ -63,14 +78,14 @@ const props = defineProps({
     required: true,
   },
   data: {
-    type: Object,
+    type: Object as () => Record<number, any>, // Specify the data type as Record<number, any>
     default: () => ({}),
   },
 });
 
-const data = reactive<Record<string, any>>({});
+const data = reactive<Record<number, any>>({}); // Specify the type of `data` as Record<number, any>
 
-const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | undefined) => {
+const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | 'list' | undefined) => {
   switch (fieldType) {
     case "text":
       return TextField;
@@ -80,50 +95,67 @@ const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' 
       return DateField;
     case "subject_tree":
       return SubjectTreeField;
+    case "list":
+      return ListField;
     default:
       return null;
   }
 };
 
-const fieldProps = (element: FormElement) => {
+// Update the return type of `fieldProps` to include `modelValue` property
+const fieldProps = (element: FormElement): { modelValue: any; label: string; elementId: string; required?: boolean; readOnly?: boolean; minValue?: number; maxValue?: number; step?: number; options?: any[] } => {
   switch (element.field?.type) {
     case "text":
       return {
-        modelValue: element.field.default_value ?? "",
+        modelValue: element.field.default_value || '', // Provide a default value for text fields
         label: element.text,
         elementId: 'textField-' + element.element_id,
-        required: element.field.required ?? false,
-        readOnly: element.field.read_only ?? false,
+        required: element.field.required,
+        readOnly: element.field.read_only,
       };
     case "numeric":
       return {
-        modelValue: element.field.default_value ?? "",
+        modelValue: element.field.default_value || null, // Provide a default value for numeric fields
         minValue: element.field.min_numeric_value,
         maxValue: element.field.max_numeric_value,
         step: element.field.only_integers ? 1 : 0.1,
-        required: element.field.required ?? false,
-        readOnly: element.field.read_only ?? false,
+        required: element.field.required,
+        readOnly: element.field.read_only,
         label: element.text,
         elementId: 'numericField-' + element.element_id,
       };
     case "date":
       return {
-        modelValue: element.field.default_value ?? "",
-        required: element.field.required ?? false,
-        readOnly: element.field.read_only ?? false,
+        modelValue: element.field.default_value || null, // Provide a default value for date fields
+        required: element.field.required,
+        readOnly: element.field.read_only,
         label: element.text,
         elementId: 'dateField-' + element.element_id,
       };
-    case "subject_tree":
+    case "subject_tree": {
+      const subjectTreeDefaultValue = element.field.default_value as SubjectTreeDefaultValue;
       return {
-        modelValue: element.field.default_value ?? "",
-        required: element.field.required ?? false,
-        readOnly: element.field.read_only ?? false,
+        modelValue: subjectTreeDefaultValue?.subject_id || null, // Provide a default value for subject tree fields
+        required: element.field.required,
+        readOnly: element.field.read_only,
         label: element.text,
         elementId: 'subjectTreeField-' + element.element_id,
       };
+    }
+    case "list": {
+      const listDefaultValue = element.field.default_value as ListDefaultValue[];
+      return {
+        modelValue: listDefaultValue?.[0]?.list_item_id || null, // Provide a default value for list fields
+        required: element.field.required,
+        readOnly: element.field.read_only,
+        label: element.text,
+        elementId: 'listField-' + element.element_id,
+        options: element.field.list_items,
+      };
+    }
+
     default:
-      return {};
+      return { modelValue: null, label: '', elementId: '' };
   }
 };
 
