@@ -6,13 +6,16 @@
         <p>Description: {{ form.description }}</p>
         <form @submit="handleSubmit">
           <div v-for="element in form.design.elements" :key="element.element_id">
-             <component 
-              :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)" 
+            <component
+              :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)"
               v-if="element.element_type === 'field'"
               v-bind="fieldProps(element)"
-              :modelValue="data[element.field?.field_id]"
-              @update:modelValue="value => data[element.field?.field_id] = value"
-
+              :modelValue="element.field?.field_id !== undefined ? data[element.field.field_id] : undefined"
+              @update:modelValue="(value: any) => {
+                if (element.field?.field_id) {
+                  data[element.field.field_id] = value;
+                }
+              }"
             ></component>
           </div>
           <button type="submit">Submit</button>
@@ -23,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive } from 'vue'
+import { defineProps, reactive } from 'vue';
 import TextField from "./form-fields/TextField.vue";
 import NumericField from "./form-fields/NumericField.vue";
 import DateField from "./form-fields/DateField.vue";
@@ -53,6 +56,7 @@ interface FormElement {
     only_integers?: boolean;
   };
 }
+
 const props = defineProps({
   form: {
     type: Object as () => Form,
@@ -64,7 +68,7 @@ const props = defineProps({
   },
 });
 
-const data = reactive({});
+const data = reactive<Record<string, any>>({});
 
 const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | undefined) => {
   switch (fieldType) {
@@ -81,56 +85,53 @@ const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' 
   }
 };
 
-
 const fieldProps = (element: FormElement) => {
   switch (element.field?.type) {
     case "text":
       return {
-        modelValue: element.field.default_value,
+        modelValue: element.field.default_value ?? "",
         label: element.text,
         elementId: 'textField-' + element.element_id,
-        required: element.field.required,
-        readOnly: element.field.read_only,
+        required: element.field.required ?? false,
+        readOnly: element.field.read_only ?? false,
       };
     case "numeric":
       return {
-        modelValue: element.field.default_value,
+        modelValue: element.field.default_value ?? "",
         minValue: element.field.min_numeric_value,
         maxValue: element.field.max_numeric_value,
         step: element.field.only_integers ? 1 : 0.1,
-        required: element.field.required,
-        readOnly: element.field.read_only,
+        required: element.field.required ?? false,
+        readOnly: element.field.read_only ?? false,
         label: element.text,
         elementId: 'numericField-' + element.element_id,
       };
     case "date":
       return {
-        modelValue: element.field.default_value,
-        required: element.field.required,
-        readOnly: element.field.read_only,
+        modelValue: element.field.default_value ?? "",
+        required: element.field.required ?? false,
+        readOnly: element.field.read_only ?? false,
         label: element.text,
         elementId: 'dateField-' + element.element_id,
       };
     case "subject_tree":
       return {
-        modelValue: element.field.default_value,
-        required: element.field.required,
-        readOnly: element.field.read_only,
+        modelValue: element.field.default_value ?? "",
+        required: element.field.required ?? false,
+        readOnly: element.field.read_only ?? false,
         label: element.text,
         elementId: 'subjectTreeField-' + element.element_id,
       };
     default:
       return {};
-    }
+  }
 };
 
 const handleSubmit = async (event: Event) => {
   event.preventDefault();
 
   const fields = props.form.design.elements
-    .filter(
-      (element) => element.element_type === 'field' && element.field
-    )
+    .filter((element) => element.element_type === 'field' && element.field)
     .map((element) => ({
       field_id: element.field!.field_id,
       field_name: element.text,
@@ -155,7 +156,7 @@ const handleSubmit = async (event: Event) => {
 
   if (navigator.onLine) {
     try {
-      console.log("ONLINE FORM SUBMIT")
+      console.log("ONLINE FORM SUBMIT");
       const response = await fetch(request);
       if (!response.ok) {
         // handle error
@@ -170,7 +171,7 @@ const handleSubmit = async (event: Event) => {
       console.error('Error:', error);
     }
   } else {
-    console.log("OFFLINE FORM SUBMIT")
+    console.log("OFFLINE FORM SUBMIT");
     // If offline, store the request in the cache
     caches.open('form-cache').then((cache) => {
       cache.put(request, new Response(JSON.stringify(fields)));
@@ -206,5 +207,4 @@ const handleSubmit = async (event: Event) => {
     });
   }
 };
-
 </script>
