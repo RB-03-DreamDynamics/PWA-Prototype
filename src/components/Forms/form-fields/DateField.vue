@@ -1,11 +1,10 @@
 <template>
   <div class="mb-3">
-
     <label :for="elementId" class="form-label">{{ label }}</label>
     <input 
         :id="elementId"
         type="date" 
-        :value="value" 
+        :value="modelValue" 
         :required="required" 
         :readonly="readOnly" 
         @input="onInput"
@@ -16,8 +15,8 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 
-defineProps({
-  value: {
+const props = defineProps({
+  modelValue: {
     type: String,
     default: '',
   },
@@ -47,10 +46,10 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["input"]);
+const emit = defineEmits(["update:modelValue"]);
 
 const onInput = (event: Event) => {
-  emit('input', (event.target as HTMLInputElement).value);
+  emit('update:modelValue', (event.target as HTMLInputElement).value);
 }
 </script>
   
@@ -60,4 +59,4 @@ const onInput = (event: Event) => {
     border-radius: 4px;
     padding: 4px;
   }
-  </style>
+</style>
