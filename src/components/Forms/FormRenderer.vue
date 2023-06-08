@@ -4,31 +4,49 @@
       <div class="col-12">
         <h1>{{ form.title }}</h1>
         <p>Description: {{ form.description }}</p>
-        <div v-for="element in form.design.elements" :key="element.element_id">
-           <component 
-            :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)" 
-            v-if="element.element_type === 'field'"
-            v-bind="fieldProps(element)"
-          ></component>
-        </div>
+        <form @submit="handleSubmit">
+          <div v-for="element in form.design.elements" :key="element.element_id">
+             <component 
+              :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)" 
+              v-if="element.element_type === 'field'"
+              v-bind="fieldProps(element)"
+              :modelValue="data[element.field?.field_id]"
+              @update:modelValue="value => data[element.field?.field_id] = value"
+
+            ></component>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, reactive } from 'vue'
 import TextField from "./form-fields/TextField.vue";
 import NumericField from "./form-fields/NumericField.vue";
 import DateField from "./form-fields/DateField.vue";
 import SubjectTreeField from "./form-fields/SubjectTreeField.vue";
+import ListField from "./form-fields/ListField.vue";
 
 interface Form {
+  form_id: number;
   title: string;
   description: string;
   design: {
     elements: FormElement[];
   };
+}
+
+interface SubjectTreeDefaultValue {
+  subject_id: number;
+  name: string;
+}
+
+interface ListDefaultValue {
+  list_item_id: number;
+  name: string;
 }
 
 interface FormElement {
@@ -38,15 +56,19 @@ interface FormElement {
   field?: {
     field_id: number;
     type: string;
-    default_value?: string;
+    default_value?: string | SubjectTreeDefaultValue | ListDefaultValue[];
     required?: boolean;
     read_only?: boolean;
     min_numeric_value?: number;
     max_numeric_value?: number;
     only_integers?: boolean;
+    list_items?: {
+      list_item_id: number;
+      name: string;
+    }[];
   };
 }
-defineProps({
+const props = defineProps({
   form: {
     type: Object as () => Form,
     required: true,
@@ -57,7 +79,9 @@ defineProps({
   },
 });
 
-const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | undefined) => {
+const data = reactive({});
+
+const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | 'list' | undefined) => {
   switch (fieldType) {
     case "text":
       return TextField;
@@ -67,6 +91,8 @@ const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' 
       return DateField;
     case "subject_tree":
       return SubjectTreeField;
+    case "list":
+      return ListField;
     default:
       return null;
   }
@@ -77,7 +103,7 @@ const fieldProps = (element: FormElement) => {
   switch (element.field?.type) {
     case "text":
       return {
-        value: element.field.default_value,
+        modelValue: element.field.default_value,
         label: element.text,
         elementId: 'textField-' + element.element_id,
         required: element.field.required,
@@ -85,7 +111,7 @@ const fieldProps = (element: FormElement) => {
       };
     case "numeric":
       return {
-        value: element.field.default_value,
+        modelValue: element.field.default_value,
         minValue: element.field.min_numeric_value,
         maxValue: element.field.max_numeric_value,
         step: element.field.only_integers ? 1 : 0.1,
@@ -96,22 +122,80 @@ const fieldProps = (element: FormElement) => {
       };
     case "date":
       return {
-        value: element.field.default_value,
+        modelValue: element.field.default_value,
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
         elementId: 'dateField-' + element.element_id,
       };
-    case "subject_tree":
+      case "subject_tree": {
+      const subjectTreeDefaultValue = element.field.default_value as SubjectTreeDefaultValue;
       return {
-        value: element.field.default_value,
+        modelValue: subjectTreeDefaultValue?.subject_id,
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
         elementId: 'subjectTreeField-' + element.element_id,
       };
+    }
+    case "list": {
+      const listDefaultValue = element.field.default_value as ListDefaultValue[];
+      return {
+        modelValue: listDefaultValue?.[0]?.list_item_id,
+        required: element.field.required,
+        readOnly: element.field.read_only,
+        label: element.text,
+        elementId: 'listField-' + element.element_id,
+        options: element.field.list_items,
+      };
+    }
+
     default:
       return {};
     }
+};
+
+const handleSubmit = async (event: Event) => {
+  event.preventDefault();
+
+  const fields = props.form.design.elements
+    .filter((element) => element.element_type === 'field' && element.field)
+    .map((element) => ({
+      field_id: element.field!.field_id,
+      value: data[element.field!.field_id],
+
+    }));
+
+    console.log("fields", fields)
+
+    console.log("body", JSON.stringify({
+      form_id: props.form.form_id,
+      fields,
+    }))
+
+  const response = await fetch('https://msteams.zenya.work/api/cases', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Api-Version': '3',
+    },
+    body: JSON.stringify({
+      form_id: props.form.form_id,
+      fields,
+    }),
+  });
+
+
+
+  console.log("checking response")
+  if (!response.ok) {
+    // handle error
+    console.log('Error:', response);
+    console.error('Error:', response.statusText);
+  } else {
+    // handle success
+    const responseData = await response.json();
+    console.log('Success:', responseData);
+  }
 };
 </script>

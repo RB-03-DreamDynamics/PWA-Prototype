@@ -1,9 +1,9 @@
 <template>
   <div class="mb-3">
-    <label for="elementId" class="form-label">{{ label }}</label>
+    <label :for="elementId" class="form-label">{{ label }}</label>
     <textarea 
       :id="elementId"
-      :value="value" 
+      :value="modelValue" 
       :required="required" 
       :readonly="readOnly" 
       :rows="textLines" 
@@ -16,8 +16,8 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 
-defineProps({
-    value: {
+const props = defineProps({
+    modelValue: {
       type: String,
       default: '',
     },
@@ -42,9 +42,10 @@ defineProps({
       default: 1,
     }
   });
-  const emit = defineEmits(['input']);
+  
+  const emit = defineEmits(['update:modelValue']);
 
   const onInput = (event: Event) => {
-    emit('input', (event.target as HTMLTextAreaElement).value);
+    emit('update:modelValue', (event.target as HTMLTextAreaElement).value);
   }
 </script>

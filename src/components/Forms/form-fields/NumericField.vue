@@ -4,7 +4,7 @@
     <input 
       type="number" 
       :id="elementId"
-      :value="value" 
+      :value="modelValue" 
       :min="minValue"
       :max="maxValue"
       :step="step"
@@ -19,8 +19,8 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 
-defineProps({
-  value: {
+const props = defineProps({
+  modelValue: {
     type: Number,
     default: 0,
   },
@@ -54,9 +54,9 @@ defineProps({
   },
 });
 
-const emit = defineEmits(['input']);
+const emit = defineEmits(['update:modelValue']);
 
 const onInput = (event: Event) => {
-  emit('input', +(event.target as HTMLInputElement).value);
+  emit('update:modelValue', +(event.target as HTMLInputElement).value);
 }
 </script>
