@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-12">
+      <div class="col-12 mb-3">
         <h1>{{ form.title }}</h1>
         <p>Description: {{ form.description }}</p>
         <form @submit="handleSubmit">
@@ -18,7 +18,7 @@
               }"
             ></component>
           </div>
-          <button type="submit">Submit</button>
+          <button class="btn zenya-bg text-white mt-3" type="submit">Verzenden</button>
         </form>
       </div>
     </div>
