@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { shallowRef, onMounted } from 'vue';
-import axios from 'axios';
 
 type ContentType = {
   content_type_id: number,
@@ -69,15 +68,20 @@ onMounted(fetchData);
       <div class="col-12">
         <div v-for="(item, index) in contentItems" :key="index" class="row mb-2">
           <div class="col-6" v-if="index % 2 === 0">
-            <router-link :to="{ name: 'FormCreate', params: { form_id: '2220' }}" >
-              <h2 class="card-title">{{ contentItems[index].title }}</h2>
-              <p class="card-text">{{ contentItems[index].summary }}</p>
+            <router-link :to="{ name: 'FormCreate', params: { form_id: '2220' }}" class="card" >
+              <img src="@/assets/images/kat.jpg" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h2 class="card-title">{{ contentItems[index].title }}</h2>
+                <p class="card-text">{{ contentItems[index].summary }}</p>
+              </div>
             </router-link>
           </div>
           <div class="col-6"  v-if="contentItems[index + 1]">
-            <router-link :to="{ name: 'FormCreate', params: { form_id: '2220' }}" >
-              <h2 class="card-title">{{ contentItems[index + 1].title }}</h2>
-              <p class="card-text">{{ contentItems[index + 1].summary }}</p>
+            <router-link :to="{ name: 'FormCreate', params: { form_id: '2220' }}" class="card">
+              <div class="card-body">
+                <h2 class="card-title">{{ contentItems[index + 1].title }}</h2>
+                <p class="card-text">{{ contentItems[index + 1].summary }}</p>
+              </div>  
             </router-link>
           </div>
         </div>
