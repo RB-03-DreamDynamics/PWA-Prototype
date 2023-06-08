@@ -128,20 +128,20 @@ const handleSubmit = async (event: Event) => {
   event.preventDefault();
 
   const fields = props.form.design.elements
-    .filter((element) => element.element_type === 'field' && element.field)
+    .filter(
+      (element) => element.element_type === 'field' && element.field
+    )
     .map((element) => ({
       field_id: element.field!.field_id,
       field_name: element.text,
       value: data[element.field!.field_id],
-
     }));
 
-    console.log("props", props.form.design)
-    console.log("form", props.form)
+  console.log('props', props.form.design);
+  console.log('form', props.form);
+  console.log('fields', fields);
 
-    console.log("fields", fields)
-
-  const response = await fetch('https://msteams.zenya.work/api/cases', {
+  const request = new Request('https://msteams.zenya.work/api/cases', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -153,15 +153,58 @@ const handleSubmit = async (event: Event) => {
     }),
   });
 
-  console.log("checking response")
-  if (!response.ok) {
-    // handle error
-    console.log('Error:', response);
-    console.error('Error:', response.statusText);
+  if (navigator.onLine) {
+    try {
+      console.log("ONLINE FORM SUBMIT")
+      const response = await fetch(request);
+      if (!response.ok) {
+        // handle error
+        console.log('Error:', response);
+        console.error('Error:', response.statusText);
+      } else {
+        // handle success
+        const responseData = await response.json();
+        console.log('Success:', responseData);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   } else {
-    // handle success
-    const responseData = await response.json();
-    console.log('Success:', responseData);
+    console.log("OFFLINE FORM SUBMIT")
+    // If offline, store the request in the cache
+    caches.open('form-cache').then((cache) => {
+      cache.put(request, new Response(JSON.stringify(fields)));
+    });
+
+    // Listen for online event
+    window.addEventListener('online', async () => {
+      try {
+        const cache = await caches.open('form-cache');
+        const cachedRequests = await cache.keys();
+
+        for (const cachedRequest of cachedRequests) {
+          const cachedResponse = await cache.match(cachedRequest);
+
+          if (cachedResponse) {
+            const response = await fetch(cachedRequest);
+            await cache.delete(cachedRequest);
+
+            if (!response.ok) {
+              // handle error
+              console.log('Error:', response);
+              console.error('Error:', response.statusText);
+            } else {
+              // handle success
+              const responseData = await response.json();
+              console.log('Success:', responseData);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
   }
 };
+
 </script>
