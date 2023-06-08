@@ -5,6 +5,7 @@ import QRLogin from '../views/qrlogin.vue';
 import LoginChoice from '../views/loginchoice.vue';
 import Dashboard from '../views/dashboardView.vue';
 import FormCreateView from '../views/formCreateView.vue';
+import logout from '../components/Auth/logout.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -37,6 +38,11 @@ const routes: RouteRecordRaw[] = [
     component: FormCreateView,
     props: true,
   },
+  {
+    path: '/logout',
+    name: 'logout',
+    component: logout
+  },
 ];
 
 const router = createRouter({
@@ -44,4 +50,15 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+
+  if (!to.path.startsWith('/login') && !token) {
+    next('/login');
+  }else if(to.path.startsWith('/login') && token){
+    next('/dashboard');
+  }else{
+    next();
+  }
+});
 export default router;

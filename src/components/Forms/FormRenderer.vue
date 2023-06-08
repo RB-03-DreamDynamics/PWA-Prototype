@@ -4,26 +4,33 @@
       <div class="col-12">
         <h1>{{ form.title }}</h1>
         <p>Description: {{ form.description }}</p>
-        <div v-for="element in form.design.elements" :key="element.element_id">
-           <component 
-            :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)" 
-            v-if="element.element_type === 'field'"
-            v-bind="fieldProps(element)"
-          ></component>
-        </div>
+        <form @submit="handleSubmit">
+          <div v-for="element in form.design.elements" :key="element.element_id">
+             <component 
+              :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)" 
+              v-if="element.element_type === 'field'"
+              v-bind="fieldProps(element)"
+              :modelValue="data[element.field?.field_id]"
+              @update:modelValue="value => data[element.field?.field_id] = value"
+
+            ></component>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, reactive } from 'vue'
 import TextField from "./form-fields/TextField.vue";
 import NumericField from "./form-fields/NumericField.vue";
 import DateField from "./form-fields/DateField.vue";
 import SubjectTreeField from "./form-fields/SubjectTreeField.vue";
 
 interface Form {
+  form_id: number;
   title: string;
   description: string;
   design: {
@@ -46,7 +53,7 @@ interface FormElement {
     only_integers?: boolean;
   };
 }
-defineProps({
+const props = defineProps({
   form: {
     type: Object as () => Form,
     required: true,
@@ -56,6 +63,8 @@ defineProps({
     default: () => ({}),
   },
 });
+
+const data = reactive({});
 
 const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | undefined) => {
   switch (fieldType) {
@@ -77,7 +86,7 @@ const fieldProps = (element: FormElement) => {
   switch (element.field?.type) {
     case "text":
       return {
-        value: element.field.default_value,
+        modelValue: element.field.default_value,
         label: element.text,
         elementId: 'textField-' + element.element_id,
         required: element.field.required,
@@ -85,7 +94,7 @@ const fieldProps = (element: FormElement) => {
       };
     case "numeric":
       return {
-        value: element.field.default_value,
+        modelValue: element.field.default_value,
         minValue: element.field.min_numeric_value,
         maxValue: element.field.max_numeric_value,
         step: element.field.only_integers ? 1 : 0.1,
@@ -96,7 +105,7 @@ const fieldProps = (element: FormElement) => {
       };
     case "date":
       return {
-        value: element.field.default_value,
+        modelValue: element.field.default_value,
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
@@ -104,7 +113,7 @@ const fieldProps = (element: FormElement) => {
       };
     case "subject_tree":
       return {
-        value: element.field.default_value,
+        modelValue: element.field.default_value,
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
@@ -113,5 +122,46 @@ const fieldProps = (element: FormElement) => {
     default:
       return {};
     }
+};
+
+const handleSubmit = async (event: Event) => {
+  event.preventDefault();
+
+  const fields = props.form.design.elements
+    .filter((element) => element.element_type === 'field' && element.field)
+    .map((element) => ({
+      field_id: element.field!.field_id,
+      field_name: element.text,
+      value: data[element.field!.field_id],
+
+    }));
+
+    console.log("props", props.form.design)
+    console.log("form", props.form)
+
+    console.log("fields", fields)
+
+  const response = await fetch('https://msteams.zenya.work/api/cases', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Api-Version': '3',
+    },
+    body: JSON.stringify({
+      form_id: props.form.form_id,
+      fields,
+    }),
+  });
+
+  console.log("checking response")
+  if (!response.ok) {
+    // handle error
+    console.log('Error:', response);
+    console.error('Error:', response.statusText);
+  } else {
+    // handle success
+    const responseData = await response.json();
+    console.log('Success:', responseData);
+  }
 };
 </script>
