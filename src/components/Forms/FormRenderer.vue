@@ -162,12 +162,16 @@ const handleSubmit = async (event: Event) => {
     .filter((element) => element.element_type === 'field' && element.field)
     .map((element) => ({
       field_id: element.field!.field_id,
-      field_name: element.text,
       value: data[element.field!.field_id],
 
     }));
 
     console.log("fields", fields)
+
+    console.log("body", JSON.stringify({
+      form_id: props.form.form_id,
+      fields,
+    }))
 
   const response = await fetch('https://msteams.zenya.work/api/cases', {
     method: 'POST',
@@ -180,6 +184,8 @@ const handleSubmit = async (event: Event) => {
       fields,
     }),
   });
+
+
 
   console.log("checking response")
   if (!response.ok) {
