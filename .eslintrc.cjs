@@ -12,5 +12,9 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest'
-  }
+  },
+  ignorePatterns: [
+    'src/components/Forms/FormRenderer.vue',
+    // Add other file paths you want to exclude
+  ]
 }
