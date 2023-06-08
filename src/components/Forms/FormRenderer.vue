@@ -28,6 +28,7 @@ import TextField from "./form-fields/TextField.vue";
 import NumericField from "./form-fields/NumericField.vue";
 import DateField from "./form-fields/DateField.vue";
 import SubjectTreeField from "./form-fields/SubjectTreeField.vue";
+import ListField from "./form-fields/ListField.vue";
 
 interface Form {
   form_id: number;
@@ -38,6 +39,16 @@ interface Form {
   };
 }
 
+interface SubjectTreeDefaultValue {
+  subject_id: number;
+  name: string;
+}
+
+interface ListDefaultValue {
+  list_item_id: number;
+  name: string;
+}
+
 interface FormElement {
   element_id: number;
   element_type: string;
@@ -45,12 +56,16 @@ interface FormElement {
   field?: {
     field_id: number;
     type: string;
-    default_value?: string;
+    default_value?: string | SubjectTreeDefaultValue | ListDefaultValue[];
     required?: boolean;
     read_only?: boolean;
     min_numeric_value?: number;
     max_numeric_value?: number;
     only_integers?: boolean;
+    list_items?: {
+      list_item_id: number;
+      name: string;
+    }[];
   };
 }
 const props = defineProps({
@@ -66,7 +81,7 @@ const props = defineProps({
 
 const data = reactive({});
 
-const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | undefined) => {
+const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | 'list' | undefined) => {
   switch (fieldType) {
     case "text":
       return TextField;
@@ -76,6 +91,8 @@ const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' 
       return DateField;
     case "subject_tree":
       return SubjectTreeField;
+    case "list":
+      return ListField;
     default:
       return null;
   }
@@ -111,14 +128,28 @@ const fieldProps = (element: FormElement) => {
         label: element.text,
         elementId: 'dateField-' + element.element_id,
       };
-    case "subject_tree":
+      case "subject_tree": {
+      const subjectTreeDefaultValue = element.field.default_value as SubjectTreeDefaultValue;
       return {
-        modelValue: element.field.default_value,
+        modelValue: subjectTreeDefaultValue?.subject_id,
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
         elementId: 'subjectTreeField-' + element.element_id,
       };
+    }
+    case "list": {
+      const listDefaultValue = element.field.default_value as ListDefaultValue[];
+      return {
+        modelValue: listDefaultValue?.[0]?.list_item_id,
+        required: element.field.required,
+        readOnly: element.field.read_only,
+        label: element.text,
+        elementId: 'listField-' + element.element_id,
+        options: element.field.list_items,
+      };
+    }
+
     default:
       return {};
     }
@@ -135,9 +166,6 @@ const handleSubmit = async (event: Event) => {
       value: data[element.field!.field_id],
 
     }));
-
-    console.log("props", props.form.design)
-    console.log("form", props.form)
 
     console.log("fields", fields)
 

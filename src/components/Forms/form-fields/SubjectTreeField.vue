@@ -1,26 +1,25 @@
 <template>
   <div>
     <label :for="elementId">{{ label }}</label>
-    <select :id="elementId" :value="value" @input="$emit('input', $event.target as HTMLSelectElement)">
-      <option v-for="option in options" :key="option.subject_id" :value="option.subject_id">
-        {{ option.name }}
-      </option>
+    <select class="form-select" v-model="localModelValue" @change="onInput($event)">
+      <option disabled value="">Please select one</option>
+      <option v-for="item in options" :key="item.subject_id" :value="item.subject_id">{{ item.name }}</option>
     </select>
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+import { defineProps, defineEmits, ref, watch } from 'vue'
 
 interface OptionType {
   subject_id: number;
   name: string;
 }
 
-defineProps({
-  value: {
-    type: Object,
-    default: () => ({}),
+const props = defineProps({
+  modelValue: {
+    type: Number,
+    default: undefined,
   },
   label: {
     type: String,
@@ -43,6 +42,17 @@ defineProps({
     default: () => ([]),
   },
 });
+
+let localModelValue = ref(props.modelValue);
+watch(() => props.modelValue, (newVal) => {
+  localModelValue.value = newVal;
+});
+
+const emit = defineEmits(["update:modelValue"]);
+
+const onInput = (event: Event) => {
+  emit('update:modelValue', parseInt((event.target as HTMLSelectElement).value));
+}
 </script>
 
 <style scoped>
