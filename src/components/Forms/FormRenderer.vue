@@ -224,37 +224,31 @@ const handleSubmit = async (event: Event) => {
     caches.open('form-cache').then((cache) => {
       cache.put(request, new Response(JSON.stringify(fields)));
     });
-
-    // Listen for online event
-    window.addEventListener('online', async () => {
-      try {
-        const cache = await caches.open('form-cache');
-        const cachedRequests = await cache.keys();
-
-        for (const cachedRequest of cachedRequests) {
-          const cachedResponse = await cache.match(cachedRequest);
-
-          if (cachedResponse) {
-            const response = await fetch(cachedRequest);
-            await cache.delete(cachedRequest);
-
-            if (!response.ok) {
-              // handle error
-              console.log('Error:', response);
-              console.error('Error:', response.statusText);
-            } else {
-              // handle success
-              const responseData = await response.json();
-              console.log('Success:', responseData);
-              isSubmitSuccess.status = true;
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    });
   }
+
+// Listen for online event
+  window.addEventListener('online', async () => {
+    try {
+      const cache = await caches.open('form-cache');
+      const cachedRequests = await cache.keys();
+
+      for (const cachedRequest of cachedRequests) {
+        const cachedResponse = await cache.match(cachedRequest);
+
+        if (cachedResponse) {
+          // handle success with cached response
+          const responseData = await cachedResponse.json();
+          console.log('Success (from cache):', responseData);
+          isSubmitSuccess.status = true;
+
+          // Delete the cached request
+          await cache.delete(cachedRequest);
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  });
 };
 
 const formatDateToyyyyMMdd = (date: string) => {
