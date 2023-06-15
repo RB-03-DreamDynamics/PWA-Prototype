@@ -4,7 +4,7 @@
     <input 
         :id="elementId"
         type="date" 
-        :value="modelValue" 
+        :value="formattedDate" 
         :required="required" 
         :readonly="readOnly" 
         @input="onInput"
@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue';
 import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
@@ -48,9 +49,23 @@ const props = defineProps({
 
 const emit = defineEmits(["update:modelValue"]);
 
+// Convert modelValue to the format expected by the date input
+const formattedDate = ref(props.modelValue.slice(0,4) + '-' + props.modelValue.slice(4,6) + '-' + props.modelValue.slice(6,8));
+
+// Update formattedDate whenever modelValue changes
+watch(props, (newProps) => {
+  formattedDate.value = newProps.modelValue ? (newProps.modelValue.slice(0,4) + '-' + newProps.modelValue.slice(4,6) + '-' + newProps.modelValue.slice(6,8)) : '';
+});
+
 const onInput = (event: Event) => {
-  emit('update:modelValue', (event.target as HTMLInputElement).value);
+  const inputValue = (event.target as HTMLInputElement).value;
+  // Only update modelValue if inputValue is in the correct format
+  if (/^\d{4}-\d{2}-\d{2}$/.test(inputValue)) {
+    const formattedInputValue = inputValue.replace(/-/g, '');
+    emit('update:modelValue', formattedInputValue);
+  }
 }
+
 </script>
   
 <style scoped>
