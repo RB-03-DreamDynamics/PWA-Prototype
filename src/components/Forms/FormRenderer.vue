@@ -246,6 +246,7 @@ const handleSubmit = async (event: Event) => {
               // handle success
               const responseData = await response.json();
               console.log('Success:', responseData);
+              isSubmitSuccess.status = true;
             }
           }
         }
