@@ -185,7 +185,7 @@ const handleSubmit = async (event: Event) => {
     })
     .filter((field) => field.value !== undefined && field.value !== null && field.value !== '');
 
-  let cachedBody = null;
+  let cachedBody: string | null = null;
 
   const request = new Request('https://msteams.zenya.work/api/cases?api-version=3', {
     method: 'POST',
