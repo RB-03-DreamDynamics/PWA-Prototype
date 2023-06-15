@@ -252,7 +252,13 @@ const handleSubmit = async (event: Event) => {
 const formatDateToyyyyMMdd = (date: string) => {
   if (!date) return '';
   const [year, month, day] = date.split('-');
-  return year + month + day;
+  if (year && month && day) {
+    return year + month + day;
+  } else {
+    console.error('Invalid date format:', date);
+    return '';
+  }
 };
+
 
 </script>
