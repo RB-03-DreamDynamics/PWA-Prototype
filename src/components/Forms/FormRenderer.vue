@@ -185,10 +185,7 @@ const handleSubmit = async (event: Event) => {
     })
     .filter((field) => field.value !== undefined && field.value !== null && field.value !== '');
 
-
-  console.log('props', props.form.design);
-  console.log('form', props.form);
-  console.log('fields', fields);
+  let cachedBody = null;
 
   const request = new Request('https://msteams.zenya.work/api/cases?api-version=3', {
     method: 'POST',
@@ -220,9 +217,15 @@ const handleSubmit = async (event: Event) => {
     }
   } else {
     console.log("OFFLINE FORM SUBMIT");
-    // If offline, store the request in the cache
+    cachedBody = JSON.stringify({
+      form_id: props.form.form_id,
+      fields,
+    });
+
+    // Store the cached body
+    const cacheKey = 'form-body';
     caches.open('form-cache').then((cache) => {
-      cache.put(request, new Response(JSON.stringify(fields)));
+      cache.put(cacheKey, new Response(cachedBody));
     });
   }
 
@@ -230,25 +233,38 @@ const handleSubmit = async (event: Event) => {
   window.addEventListener('online', async () => {
     try {
       const cache = await caches.open('form-cache');
-      const cachedRequests = await cache.keys();
+      const cachedBodyResponse = await cache.match('form-body');
 
-      for (const cachedRequest of cachedRequests) {
-        const cachedResponse = await cache.match(cachedRequest);
+      if (cachedBodyResponse) {
+        const rebuiltRequest = new Request(request.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: cachedBody,
+        });
 
-        if (cachedResponse) {
-          // handle success with cached response
-          const responseData = await cachedResponse.json();
-          console.log('Success (from cache):', responseData);
+        const response = await fetch(rebuiltRequest);
+        if (!response.ok) {
+          // handle error
+          console.log('Error:', response);
+          console.error('Error:', response.statusText);
+        } else {
+          // handle success
+          const responseData = await response.json();
+          console.log('Success:', responseData);
           isSubmitSuccess.status = true;
-
-          // Delete the cached request
-          await cache.delete(cachedRequest);
         }
+
+        // Delete the cached body
+        await cache.delete('form-body');
       }
     } catch (error) {
       console.error('Error:', error);
     }
   });
+
+
 };
 
 const formatDateToyyyyMMdd = (date: string) => {
