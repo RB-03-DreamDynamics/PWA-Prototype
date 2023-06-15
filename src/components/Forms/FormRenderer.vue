@@ -164,21 +164,30 @@ const handleSubmit = async (event: Event) => {
 
   const fields = props.form.design.elements
     .filter((element) => element.element_type === 'field' && element.field)
-    .map((element) => ({
-      field_id: element.field!.field_id,
-      field_name: element.text,
-      value: data[element.field!.field_id],
-    }));
+    .map((element) => {
+      let value = data[element.field!.field_id];
+      
+      // If the field is a date field, convert the value to the 'yyyyMMdd' format
+      if (element.field?.type === 'date') {
+        value = formatDateToyyyyMMdd(value);
+      }
+
+      return {
+        field_id: element.field!.field_id,
+        value,
+      };
+    })
+    .filter((field) => field.value !== undefined && field.value !== null && field.value !== '');
+
 
   console.log('props', props.form.design);
   console.log('form', props.form);
   console.log('fields', fields);
 
-  const request = new Request('https://msteams.zenya.work/api/cases', {
+  const request = new Request('https://msteams.zenya.work/api/cases?api-version=3', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Api-Version': '3',
     },
     body: JSON.stringify({
       form_id: props.form.form_id,
@@ -239,4 +248,11 @@ const handleSubmit = async (event: Event) => {
     });
   }
 };
+
+const formatDateToyyyyMMdd = (date: string) => {
+  if (!date) return '';
+  const [year, month, day] = date.split('-');
+  return year + month + day;
+};
+
 </script>
