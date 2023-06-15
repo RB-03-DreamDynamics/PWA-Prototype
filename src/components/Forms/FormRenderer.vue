@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <div v-if="isSubmitSuccess.status" class="alert alert-success" role="alert">
+      Form submission successful!
+    </div>
     <div class="row">
       <div class="col-12 mb-3">
         <h1>{{ form.title }}</h1>
@@ -71,6 +74,9 @@ interface FormElement {
     }[];
   };
 }
+
+const isSubmitSuccess = reactive({status: false});
+
 
 const props = defineProps({
   form: {
@@ -207,6 +213,7 @@ const handleSubmit = async (event: Event) => {
         // handle success
         const responseData = await response.json();
         console.log('Success:', responseData);
+        isSubmitSuccess.status = true;
       }
     } catch (error) {
       console.error('Error:', error);
