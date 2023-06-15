@@ -1,9 +1,52 @@
 # PWA-Zenya-Capture
 
-To build a PWA you need to use a server. This can be done with ngrok.
+## Project setup
+```
+npm install
+```
 
-1. npm i
-2. npm run build
-3. npx http-server dist
-4. cmd ngrok
-5. ngrok.exe http 8080
+### Compiles and hot-reloads for development
+```
+npm run dev
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Run linter
+```
+npm run lint
+```
+
+## Project structure
+```
+├── public
+├── src
+│   ├── assets
+│   │   ├── fonts
+│   │   ├── images
+|   |   ├── main.scss
+│   │   └── icons
+│   ├── components
+│   │   ├── Auth
+│   │   ├── Forms
+│   │   |   ├── form-fields
+|   |   ├── icons
+│   │   └── Layout
+│   ├── router
+|   ├── stores
+│   ├── views
+│   ├── App.vue
+│   ├── main.ts
+|   ├── registerServiceWorker.ts
+|   └── service-worker.js
+├── index.html
+├── package.json
+├── tsconfig.json
+├── README.md
+└── vue.config.js
+```
+
+
