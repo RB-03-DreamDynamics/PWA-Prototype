@@ -1,21 +1,24 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-12">
+      <div class="col-12 mb-3">
         <h1>{{ form.title }}</h1>
         <p>Description: {{ form.description }}</p>
         <form @submit="handleSubmit">
           <div v-for="element in form.design.elements" :key="element.element_id">
-             <component 
-              :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)" 
+            <component
+              :is="fieldComponent(element.field?.type as 'text' | 'numeric' | 'date' | 'subject_tree' | undefined)"
               v-if="element.element_type === 'field'"
               v-bind="fieldProps(element)"
-              :modelValue="data[element.field?.field_id]"
-              @update:modelValue="value => data[element.field?.field_id] = value"
-
+              :modelValue="element.field?.field_id !== undefined ? data[element.field.field_id] : undefined"
+              @update:modelValue="(value: any) => {
+                if (element.field?.field_id) {
+                  data[element.field.field_id] = value;
+                }
+              }"
             ></component>
           </div>
-          <button type="submit">Submit</button>
+          <button class="btn zenya-bg text-white mt-3" type="submit">Verzenden</button>
         </form>
       </div>
     </div>
@@ -23,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive } from 'vue'
+import { defineProps, reactive } from 'vue';
 import TextField from "./form-fields/TextField.vue";
 import NumericField from "./form-fields/NumericField.vue";
 import DateField from "./form-fields/DateField.vue";
@@ -68,18 +71,19 @@ interface FormElement {
     }[];
   };
 }
+
 const props = defineProps({
   form: {
     type: Object as () => Form,
     required: true,
   },
   data: {
-    type: Object,
+    type: Object as () => Record<number, any>, // Specify the data type as Record<number, any>
     default: () => ({}),
   },
 });
 
-const data = reactive({});
+const data = reactive<Record<number, any>>({}); // Specify the type of `data` as Record<number, any>
 
 const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' | 'list' | undefined) => {
   switch (fieldType) {
@@ -98,12 +102,12 @@ const fieldComponent = (fieldType: 'text' | 'numeric' | 'date' | 'subject_tree' 
   }
 };
 
-
-const fieldProps = (element: FormElement) => {
+// Update the return type of `fieldProps` to include `modelValue` property
+const fieldProps = (element: FormElement): { modelValue: any; label: string; elementId: string; required?: boolean; readOnly?: boolean; minValue?: number; maxValue?: number; step?: number; options?: any[] } => {
   switch (element.field?.type) {
     case "text":
       return {
-        modelValue: element.field.default_value,
+        modelValue: element.field.default_value || '', // Provide a default value for text fields
         label: element.text,
         elementId: 'textField-' + element.element_id,
         required: element.field.required,
@@ -111,7 +115,7 @@ const fieldProps = (element: FormElement) => {
       };
     case "numeric":
       return {
-        modelValue: element.field.default_value,
+        modelValue: element.field.default_value || null, // Provide a default value for numeric fields
         minValue: element.field.min_numeric_value,
         maxValue: element.field.max_numeric_value,
         step: element.field.only_integers ? 1 : 0.1,
@@ -122,16 +126,16 @@ const fieldProps = (element: FormElement) => {
       };
     case "date":
       return {
-        modelValue: element.field.default_value,
+        modelValue: element.field.default_value || null, // Provide a default value for date fields
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
         elementId: 'dateField-' + element.element_id,
       };
-      case "subject_tree": {
+    case "subject_tree": {
       const subjectTreeDefaultValue = element.field.default_value as SubjectTreeDefaultValue;
       return {
-        modelValue: subjectTreeDefaultValue?.subject_id,
+        modelValue: subjectTreeDefaultValue?.subject_id || null, // Provide a default value for subject tree fields
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
@@ -141,7 +145,7 @@ const fieldProps = (element: FormElement) => {
     case "list": {
       const listDefaultValue = element.field.default_value as ListDefaultValue[];
       return {
-        modelValue: listDefaultValue?.[0]?.list_item_id,
+        modelValue: listDefaultValue?.[0]?.list_item_id || null, // Provide a default value for list fields
         required: element.field.required,
         readOnly: element.field.read_only,
         label: element.text,
@@ -151,8 +155,8 @@ const fieldProps = (element: FormElement) => {
     }
 
     default:
-      return {};
-    }
+      return { modelValue: null, label: '', elementId: '' };
+  }
 };
 
 const handleSubmit = async (event: Event) => {
@@ -160,24 +164,30 @@ const handleSubmit = async (event: Event) => {
 
   const fields = props.form.design.elements
     .filter((element) => element.element_type === 'field' && element.field)
-    .map((element) => ({
-      field_id: element.field!.field_id,
-      value: data[element.field!.field_id],
+    .map((element) => {
+      let value = data[element.field!.field_id];
+      
+      // If the field is a date field, convert the value to the 'yyyyMMdd' format
+      if (element.field?.type === 'date') {
+        value = formatDateToyyyyMMdd(value);
+      }
 
-    }));
+      return {
+        field_id: element.field!.field_id,
+        value,
+      };
+    })
+    .filter((field) => field.value !== undefined && field.value !== null && field.value !== '');
 
-    console.log("fields", fields)
 
-    console.log("body", JSON.stringify({
-      form_id: props.form.form_id,
-      fields,
-    }))
+  console.log('props', props.form.design);
+  console.log('form', props.form);
+  console.log('fields', fields);
 
-  const response = await fetch('https://msteams.zenya.work/api/cases', {
+  const request = new Request('https://msteams.zenya.work/api/cases?api-version=3', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Api-Version': '3',
     },
     body: JSON.stringify({
       form_id: props.form.form_id,
@@ -185,17 +195,64 @@ const handleSubmit = async (event: Event) => {
     }),
   });
 
-
-
-  console.log("checking response")
-  if (!response.ok) {
-    // handle error
-    console.log('Error:', response);
-    console.error('Error:', response.statusText);
+  if (navigator.onLine) {
+    try {
+      console.log("ONLINE FORM SUBMIT");
+      const response = await fetch(request);
+      if (!response.ok) {
+        // handle error
+        console.log('Error:', response);
+        console.error('Error:', response.statusText);
+      } else {
+        // handle success
+        const responseData = await response.json();
+        console.log('Success:', responseData);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   } else {
-    // handle success
-    const responseData = await response.json();
-    console.log('Success:', responseData);
+    console.log("OFFLINE FORM SUBMIT");
+    // If offline, store the request in the cache
+    caches.open('form-cache').then((cache) => {
+      cache.put(request, new Response(JSON.stringify(fields)));
+    });
+
+    // Listen for online event
+    window.addEventListener('online', async () => {
+      try {
+        const cache = await caches.open('form-cache');
+        const cachedRequests = await cache.keys();
+
+        for (const cachedRequest of cachedRequests) {
+          const cachedResponse = await cache.match(cachedRequest);
+
+          if (cachedResponse) {
+            const response = await fetch(cachedRequest);
+            await cache.delete(cachedRequest);
+
+            if (!response.ok) {
+              // handle error
+              console.log('Error:', response);
+              console.error('Error:', response.statusText);
+            } else {
+              // handle success
+              const responseData = await response.json();
+              console.log('Success:', responseData);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
   }
 };
+
+const formatDateToyyyyMMdd = (date: string) => {
+  if (!date) return '';
+  const [year, month, day] = date.split('-');
+  return year + month + day;
+};
+
 </script>
